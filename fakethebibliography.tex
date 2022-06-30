@@ -1,0 +1,37 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{etoolbox}
+\newbool{usebibtex}
+\booltrue{usebibtex}
+%\boolfalse{usebibtex}
+\newcommand{\ifbibtex}[2]{\ifbool{usebibtex}{#1}{#2}}
+
+\ifbool{usebibtex}{
+}{
+    \input{citekeys}
+
+    \newbool{firstcitekey}
+
+    \newcommand{\citekey}[1]{%
+        \ifbool{firstcitekey}{\boolfalse{firstcitekey}}{, }%
+        \arabic{#1}%
+    }
+
+    \renewcommand{\cite}[1]{[%
+        \booltrue{firstcitekey}%
+        \forcsvlist{\citekey}{#1}%
+        ]%
+    }    
+}
+
+\begin{document}
+
+    Hi. \cite{McMinn2021,McMinn2022,McMinn2021}
+
+    \ifbool{usebibtex}{
+        \bibliographystyle{plain}
+        \bibliography{realbib}
+    }{        
+        \input{fakebib}
+    }
+\end{document}
